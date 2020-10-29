@@ -12,7 +12,8 @@ View mode u kullanabilmek için view-mode.js yi web sayfanıza
 ``` import viewMode from './view-mode.js' ``` edebilir veya  
 ``` <script src="./view-mode.js"></script> ``` diyerek de bağlayabilirsiniz.
 View mode kütüphanelerde, vanilla javascript dosyalarında ve sade HTML dosyalarında
-kullanılabilir.
+kullanılabilir. Eğer kütüphanesiz projenizde modül hatasını çözemiyor iseniz export default u silip
+``` <script src="./view-mode.js"></script> ``` diyerek bağlayıp kullanabilirsiniz.
 
 <br>
 
