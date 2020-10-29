@@ -1,152 +1,129 @@
-# View mode engine 1.0.0
-view-mode.js web sayfalarınızda light mode, dark mode gibi görüntü değişimlerini kolayca yapmanızı sağlar. view-mode.js function tabanlı yazılmştır.   
-Objeler üzerinden çalışan view-mode.js de layer lar vardır ve her layer ın kendine
-özgü css kodlar bulunur  
-Ve bu görüntü motoru bir fonksiyon ile çalışır bu fonksiyonun ismini siz belirlersiniz.
-view-mode.js yi örnek bir React.js freamework ünün App.js dosyasında anlatacağım.
+# View Mode 1.1.1
+View mode web sayfalarınızın tema değişimlerini kolayca ve kontrollü yapabilmenizi sağlar.
 
-## Başlangıç
-view-mode.js yi github üzerinden indirebilirsiniz.  
-Önce view-mode.js yi dosyamıza import ediyoruz.
-> düz javascript dosyalarında html dosyanıza view-mode.js yi bağlayarak da kullanabilirsiniz.
-```javascript
-import viewMode from './lib/view-mode.js'
-```
-viewMode içerisine bir obje alır ve bu objenin içerisinde
-3 değer bulunur ``` name ``` ``` layers ``` ``` startFunctionName ```  
-**name** view-mode.js nin kendi içerisinde tanım yapmasını sağlar.  
-**layers** katmanları belirtir. layers içerisindeki her obje bir layer dır.  
-her katmanın bir class veya id ismi vardır
-bunları name e veririz. layers ın içerisindeki her layer ın bir name olduğu gibi
-bu name i kullanan etiketlere verilmesi gerekn css değerleride vardır. buda css e verilir.  
-**css** değeride bir objedir ve içerisinde şu şekilde yazılmış
-css kodları bulunur;
-```javascript
-{name: '.layer-2', css: {background: 'rgb(46, 46, 46)', border: '1px solid grey'}}
-```
-**!!! name değişkenine değer verirken mutlaka, class olarak kullancaksanız başına ``` . ```
-id olarak kullancaksanız başına ``` # ``` işaretini koymayı unutmayın.**  
-**startFunctionName** ise bu tanımladığınız modun hangi fonksiyon adı ile çalışacağını belirtir.
+1. [Başlangıç](#Başlangıç)
+2. [Giriş](#Giriş)
 
 <br>
 
-## Tutorial
->Bir dark mode yazalım.
+>## Başlangıç
+npm e yüklenmediği için github üzerinde indirebilir güncellemeleri pull edebilirsiniz.  
+View mode u kullanabilmek için view-mode.js yi web sayfanıza
+``` import viewMode from './view-mode.js' ``` edebilir veya  
+``` <script src="./view-mode.js"></script> ``` diyerek de bağlayabilirsiniz.
+View mode kütüphanelerde, vanilla javascript dosyalarında ve sade HTML dosyalarında
+kullanılabilir.
+
+<br>
+
+## Giriş
+Öncelikle bir viewMode oluşturuyoruz.  
+> viewMode u bir değişkene atamanız önerilir
+```javascript
+const darkMode = viewMode({})
+```
+
+ Bir viewMode oluşturduk, şimdi içerisine parametre girelim.
+viewMode içerisine bir obje alır ve mode u o obje üzerinden manipüle eder.
+obje 4 değer alır
+``` name ```: name viewMode un default değeridir girmek zorunda değilsiniz.
+```javascript
+const darkMode = viewMode({
+    name: 'dark-mode'
+})
+```
+
+``` animation ```: animationda bir objedir ve 2 değer alır bunlar ``` mode ``` ve ``` time ``` dır.
+mode değeri animasyon olacakmı gecikme olacakmı onu belirler,
+time ise bu animasyonun ne kadar süreceğini belirtir.
+mode true ise animasyon olur, eğer mode false ise animasyon olmaz
+ve mode false girildiyse time değerinin gönderilmesine gerek yoktur.
+animation özünde transition kullanır
 ```javascript
 const darkMode = viewMode({
     name: 'dark-mode',
+    animation: { mode: true, time: '1s' }
+})
+```
+
+``` layers ```: layers ise web sayfanızda hangi class ve id lere
+hangi modda ne tür css değerleri verilecek bunları tutar. layers bir array dir 
+ve içerisinde layer bilgilerinin tutulduğu objeler bulundurur.
+Her layer in ``` name ``` ve ``` css ``` değerleri vardır.
+name class veya id ismini temsil eder, css ise o id veya class ın
+hangi css değerlerini alacağını barındırır.
+
+```javascript
+const darkMode = viewMode({
+    name: 'dark-mode',
+    animation: { mode: true, time: '1s' },
     layers: [
-        {name: '.layer-1', css: {background: 'black', color: 'white'}},
-        {name: '.layer-2', css: {background: 'rgb(46, 46, 46)', border: '1px solid grey'}}
+        {name: ".first-layer", css: {backgroundColor: "black", color: "white"}}
+        {name: ".last-layer", css: {
+            backgroundColor: "white", color: "black", boxShadow: "0 0 20px #343434"
+        }}
+    ]
+})
+```
+bildiğimiz gibi css yazarken her anahtar kelime arasına "-" işareti gelir
+``` background-color: red; ``` gibi ancak Javascript içerisinde bunları
+yazmamız mümkün değildir bu yüzden anahtar kelimelerin ilki hariç diğerlerinin baş harfini büyük yapmanız gerekmektedir örneğin
+```
+backgroundColor, "background-color"
+texDecoration, "text-decoration"
+boxShadow, "box-shadow"
+textAlign, "text-align"
+borderBottomLeftRadius, "border-bottom-left-radius"
+```
+Şeklinde yazılmalıdır. Name değeri ise HTML etiketlerinin kullandığı
+class veya id değerini temsil eder eğer viewMode un değişiklik yapacağı etikete class verilmiş ise
+name başına ``` . ``` koyulmalıdır eğer id ise ``` # ``` koyulmalıdır
+```
+name: ".first-layer"
+name: "#last-layer"
+```
+
+
+``` startFunctionName ```: startFunctionName ise tanımladğınız bu modun hangi
+method adı ile çalışacağını belirler.  
+değer tipi string olmalıdır.
+
+```javascript
+const darkMode = viewMode({
+    name: 'dark-mode',
+    animation: { mode: true, time: '1s' },
+    layers: [
+        {name: ".first-layer", css: {backgroundColor: "black", color: "white"}}
+        {name: ".last-layer", css: {
+            backgroundColor: "white", color: "black", boxShadow: "0 0 20px #343434"
+        }}
     ],
     startFunctionName: 'goDarkMode'
 })
 ```
-
-<br>
-
-Bu yazdığımız dark modu kullanabilmek için **startFunctionName** e verdiğimiz değeri kullanıyoruz.
-**viewMode()** bize tanımladığımız modu çalıştırabilmemiz için bir fonksiyon return eder.
-Bu fonksiyonun ismi ise **startFunctionName** e verdiğimiz değerdir.
-
-> Bir React projesindeki App.js dosyası
+Tüm gereksinimleri tamamladıktan sonra **goDarkMode()** methodunu darkMode dan almamız gerek
 
 ```javascript
-const App = _ => {
-    const darkMode = viewMode({
-        name: 'dark-mode',
-        layers: [
-            {name: '.layer-1', css: {background: 'black', color: 'white'}},
-            {name: '.layer-2', css: {background: 'rgb(46, 46, 46)', border: '1px solid grey'}}
-        ],
-        startFunctionName: 'goDarkMode'
-    })
-    const { goDarkMode } = darkMode
-
-    return (
-        <div id="App">
-            <div className="layer-1" style={{padding: "2em"}}>
-                <h1 className="layer-2">
-                    text
-                </h1>
-            </div>
-
-            <button onClick={() => goDarkMode()}>
-                !Dark Mode
-            </button>
-        </div>
-    )
-}
-```
-Bir dark mode oluşturup bunu çalıştırdık ufak bir div parçasını ve içerisindeki html i
-dark mode tarzına dönüştürdük. Birde light mode yazalım ve bunuda çalıştıralım.
-Yine aynı şekilde bir viewMode açıyoruz.
-
-```javascript
-const lightMode = viewMode({
-    name: 'light-mode',
+const darkMode = viewMode({
+    name: 'dark-mode',
+    animation: { mode: true, time: '1s' },
     layers: [
-        {name: '.layer-1', css: {background: 'white', color: 'black', border: '1px solid black'}},
-        {name: '.layer-2', css: {background: 'grey'}}
+        {name: ".first-layer", css: {backgroundColor: "black", color: "white"}}
+        {name: ".last-layer", css: {
+            backgroundColor: "white", color: "black", boxShadow: "0 0 20px #343434"
+        }}
     ],
-    startFunctionName: 'goLightMode'
+    startFunctionName: 'goDarkMode'
 })
-const { goLightMode } = lightMode
+const { goDarkMode } = darkMode
 ```
-light modumuzu oluşturduk yinde aynı layerları kullandık, fakat css kodları farklı.
-Şimdi bu light modu da bir butona tıklandığında açılmasını sağlayalım.
+methodu da çıkarığımıza göre bir button a atayabilir ve kullanabiliriz.
 
-```javascript
-const App = _ => {
-    const darkMode = viewMode({
-        name: 'dark-mode', // modun ismi
-        layers: [ // modun katmanları
-            {name: '.layer-1', css: {background: 'black', color: 'white'}},
-            {name: '.layer-2', css: {background: 'rgb(46, 46, 46)', border: '1px solid grey'}}
-        ], // modun ateşlenme çağırısında kullanılacak isim
-        startFunctionName: 'goDarkMode'
-    })
-    const { goDarkMode } = darkMode // moddan çıkartılan ateşlenme fonksiyonunun çıkartılması
-
-    const lightMode = viewMode({
-        name: 'light-mode',
-        layers: [
-            {name: '.layer-1', css: {background: 'white', color: 'black', border: '1px solid black'}},
-            {name: '.layer-2', css: {background: 'grey'}}
-        ],
-        startFunctionName: 'goLightMode'
-    })
-    const { goLightMode } = lightMode
-
-    return (
-        <div id="App">
-            {/* modda tanımlanan layer isimlerinin kullanımı */}
-            <div className="layer-1" style={{padding: "2em"}}>
-                <h1 className="layer-2">
-                    text
-                </h1>
-            </div>
-
-            {/* ateşleme fonksiyonlarının çalıştırılması */}
-            <button onClick={() => goDarkMode()}>
-                !Dark Mode
-            </button>
-
-            <button onClick={() => goLightMode()}>
-                !Light Mode
-            </button>
-        </div>
-    )
-}
+```html
+<button onclick="goDarkMode()">
+    ! Dark Mode
+</button>
 ```
-Bir light modda tanımladık ve bunuda çalıştırdık bu sayede çok rhatca view mode değişimleri yapabiliriz.
 
-<br>
-
-Eğer web sayfanız açılır açılmaz bir modun çalışmasını istiyorsanız
-bir kütüphane veya vanilla js uygulaması dahi olsa direk olarak **darkMode()** diye çalıştırmayınız.
-DOM üzerinden css verdiği için DOM yüklanmeden viewMode çalışma olasılığı vardır, bu ise bir hataya veya çalışmayan bir viewMode ortaya çıkartır. bu sorunu ortan kaldırmak için;
-```javascript
-window.onload = darkMode()
-```
-DOM yüklendikten sonra çalışmasını sağlayarak yapmalısınız.
+Bir viewMode oluşturup onu çalıştırdık ve kullandık aynı şekilde birde lightMode yazark birden fazla
+theme oluşturabilirsiniz.
