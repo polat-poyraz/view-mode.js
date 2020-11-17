@@ -1,9 +1,9 @@
-export default function viewMode(data) {
+function viewMode(data) {
     const { name, layers, startFunctionName, animation } = data
     const Content = {}
 
     function animationEnginer() {
-        return `${animation.mode ? `transition: ${animation.time};` : null }`
+        return `${animation.mode ? `${animation.time}` : null }`
     }
 
     Content[startFunctionName] = function() {
@@ -17,9 +17,10 @@ export default function viewMode(data) {
                     for (const prop in css) {
                         const key = prop
                         const cssValue = css[prop]
+                        console.log(key, cssValue)
 
                         All[i].style[key] = cssValue
-                        All[i].style = animationEnginer()
+                        All[i].style.transition = animationEnginer()
                     }
                 }
             }
